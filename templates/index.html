@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+      button.dragme {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* set these so Chrome doesn't return 'auto' from getComputedStyle */
+    width: 200px;
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid rgba(0, 0, 0, 1);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+        .second {
+            left: 100px;
+            top: 100px;
+        }
+
+        body, html {
+            min-height: 100vh;
+        }
+        .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+    </style>
+</head>
+
+<body>
+ 
+    <div class="button-container" id="buttonContainer">
+        <label id="button_vnhzm1auw" data-contype="test" class="switch dragme button_vnhzm1auw" data-item="0" draggable="true"><input type="checkbox" id="myCheckbox" name="TEST"><span class="slider round"></span></label>
+        
+    </div>
+
+    <input type="text" id="buttonName" placeholder="Button Name">
+    <button onclick="addButton()">Add Button</button>
+    <button onclick="addSwitch()">Add Switch</button>
+
+    <button onclick="saveButtons()">Save Buttons</button>
+   
+    <script>
+ function saveButtons() {
+    var buttons = document.getElementsByClassName('dragme');
+    var buttonPositions = [];
+
+    for (var i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        buttonPositions.push({
+            auth: "afc342",
+            id: "afc342",
+            button_id: button.id,
+            button_name: button.getAttribute('data-name'),
+
+            left: button.style.left,
+            top: button.style.top,
+            class: button.className,
+            'data-item': button.getAttribute('data-item'),
+            'data-contype': button.getAttribute('data-contype')
+        });
+    }
+
+    var formData = new FormData();
+    formData.append('button_positions', JSON.stringify(buttonPositions));
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/save_buttons', true);
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.onload = function() {
+    if (xhr.status === 200) {
+        console.log('Button positions saved successfully');
+    } else {
+        console.error('Failed to save button positions');
+    }
+};
+xhr.send(JSON.stringify(buttonPositions));
+}
+
+
+
+    function addSwitch() {
+    var buttonName = document.getElementById('buttonName').value;
+
+    var authCode = generateAuthCode();
+    var switchId = 'button_' + authCode; 
+
+    var buttonContainer = document.getElementById('buttonContainer');
+    var switchLabel = document.createElement('label');
+    switchLabel.setAttribute('id', switchId);
+    switchLabel.setAttribute('data-contype', "switch");
+    switchLabel.setAttribute('data-name', buttonName);
+
+    switchLabel.setAttribute('class', 'switch dragme ' + switchId);
+    switchLabel.setAttribute('data-item', buttonContainer.children.length); 
+    switchLabel.setAttribute('draggable', true); 
+
+    var switchInput = document.createElement('input');
+    switchInput.setAttribute('type', 'checkbox');
+    switchInput.setAttribute('id', 'myCheckbox');
+    switchInput.setAttribute('name', buttonName);
+
+    var switchSpan = document.createElement('span');
+    switchSpan.setAttribute('class', 'slider round');
+
+    switchLabel.appendChild(switchInput);
+    switchLabel.appendChild(switchSpan);
+
+    buttonContainer.appendChild(switchLabel);
+
+    
+    switchInput.addEventListener('change', function() {
+        var isChecked = switchInput.checked;
+        var buttonName = switchInput.getAttribute('name'); 
+        var newStatus = isChecked ? 'ON' : 'OFF';
+
+        var formData = new FormData();
+        formData.append('auth_code', "afc342"); 
+        formData.append('device', buttonName); 
+        formData.append('is_checked', newStatus); 
+
+        console.log(isChecked + " N " + buttonName + " Z " + newStatus)
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/toggle_device', true);
+xhr.setRequestHeader('Content-Type', 'application/json'); 
+xhr.onload = function() {
+    if (xhr.status === 200) {
+        console.log('Device status toggled successfully');
+    } else {
+        console.error('Failed to toggle device status. Status:', xhr.status, 'Response:', xhr.responseText);
+    }
+};
+
+var jsonData = {};
+for (var [key, value] of formData.entries()) {
+    jsonData[key] = value;
+}
+
+xhr.send(JSON.stringify(jsonData));
+
+    });
+    switchLabel.addEventListener('dragstart', function(event) {
+        event.dataTransfer.setData('text/plain', event.target.id);
+        event.dataTransfer.setData('text/prevIndex', event.target.getAttribute('data-item'));  
+    });
+
+    switchLabel.addEventListener('dragstart', drag_start, false);
+    switchLabel.addEventListener('dragover', drag_over, false);
+    switchLabel.addEventListener('drop', drop, false);
+}
+           
+
+
+
+        function addButton() {
+            var buttonName = document.getElementById('buttonName').value;
+            var buttonContainer = document.getElementById('buttonContainer');
+
+            var authCode = generateAuthCode();
+            var buttonId = 'button_' + authCode;
+
+            var button = document.createElement('button');
+            button.setAttribute('id', buttonId);
+            switchLabel.setAttribute('contype', "button");
+
+            button.setAttribute('class', 'dragme ' + buttonId);
+            button.setAttribute('data-item', buttonContainer.children.length); 
+            button.setAttribute('draggable', true); 
+            button.innerText = buttonName || 'New Button';
+
+            button.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData('text/plain', event.target.id);
+                event.dataTransfer.setData('text/prevIndex', event.target.getAttribute('data-item'));
+            });
+
+            buttonContainer.appendChild(button);
+
+            button.addEventListener('dragstart', drag_start, false);
+            document.body.addEventListener('dragover', drag_over, false);
+            document.body.addEventListener('drop', drop, false);
+        }
+       
+
+        function generateAuthCode() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        function drag_start(event) {
+            var style = window.getComputedStyle(event.target, null);
+            event.dataTransfer.setData("text/plain", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + ',' + event.target.getAttribute('data-item'));
+        }
+
+        function drag_over(event) {
+            event.preventDefault();
+            return false;
+        }
+  
+
+        function drop(event) {
+    var offset = event.dataTransfer.getData("text/plain").split(',');
+    var dm = document.getElementsByClassName('dragme');
+    var draggedItemIndex = parseInt(offset[2]);
+    
+    if (dm.length > draggedItemIndex && draggedItemIndex >= 0) {
+        dm[draggedItemIndex].style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
+        dm[draggedItemIndex].style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+    } else {
+        console.error('Hedef öğe bulunamadı veya geçersiz.');
+    }
+    event.preventDefault();
+    return false;
+}
+
+
+        var dm = document.getElementsByClassName('dragme');
+        for (var i = 0; i < dm.length; i++) {
+            dm[i].addEventListener('dragstart', drag_start, false);
+            document.body.addEventListener('dragover', drag_over, false);
+            document.body.addEventListener('drop', drop, false);
+        }
+
+    </script>
+</body>
+</html>
