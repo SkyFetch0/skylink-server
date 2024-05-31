@@ -60,7 +60,7 @@ def index():
         print("User data from DB:", user_data)
         if len(user_data) == 10:  # auth_key + D0-D8
             device_status = {f'D{i}': user_data[i] for i in range(1, 10)}
-            return render_template('index.html', device_status=device_status)
+            return render_template('panel.html', device_status=device_status)
         else:
             return 'Data format error', 500
     else:
