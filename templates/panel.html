@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>FLASK</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        button.dragme {
+      position: absolute;
+      left: 0;
+      top: 0;
+      /* set these so Chrome doesn't return 'auto' from getComputedStyle */
+      width: 200px;
+      background: rgba(255, 255, 255, 1);
+      border: 2px solid rgba(0, 0, 0, 1);
+      border-radius: 4px;
+      padding: 8px;
+  }
+  
+          .second {
+              left: 100px;
+              top: 100px;
+          }
+  
+          body, html {
+              min-height: 100vh;
+          }
+          .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+      </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-secondary navbar-dark">
+                <a href="index.html" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>SkyLink</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <div class="position-relative">
+                        <img class="rounded-circle" src="https://cdn.discordapp.com/attachments/997528240761618472/1246234723508949043/da524f9cbb4bd079c219a432ca222799.png?ex=665ba608&is=665a5488&hm=7795de736790b23851215ce73e0188d8b4fcf4bb96572ca2a2ae336eafd4e870&" alt="" style="width: 40px; height: 40px;">
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0">Skyfetch</h6>
+                    </div>
+                </div>
+                <div class="navbar-nav w-100">
+                    <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Main</a>
+                  
+                  
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+                </form>
+                <div class="navbar-nav align-items-center ms-auto">
+                   
+                    <div class="nav-item dropdown">
+                       
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img class="rounded-circle me-lg-2" src="https://cdn.discordapp.com/attachments/997528240761618472/1246234723508949043/da524f9cbb4bd079c219a432ca222799.png?ex=665ba608&is=665a5488&hm=7795de736790b23851215ce73e0188d8b4fcf4bb96572ca2a2ae336eafd4e870&" alt="" style="width: 40px; height: 40px;">
+                            <span class="d-none d-lg-inline-flex">Skyfetch</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">My Profile</a>
+                            <a href="#" class="dropdown-item">Settings</a>
+                            <a href="#" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <!-- İlk blok -->
+                    <div class="col-sm-12 col-md-6 col-xl-4">
+                        <div class="h-100 bg-secondary rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Switch List</h6>
+                                <a href="">Show All</a>
+                            </div>
+                            <div class="d-flex mb-2">
+                              
+                                <input class="form-control bg-dark border-0" type="text" id="buttonName" placeholder="Enter Switch Value">
+                                <button type="button" onclick="addSwitch()" class="btn btn-primary m-2"><i class="fa fa-toggle-on"></i> Add Switch</button>
+                            </div>
+                            <div class="d-flex align-items-center border-bottom py-2">
+                                <input class="form-check-input m-0" type="checkbox">
+                                <div class="w-100 ms-3">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <span>Short task goes here...</span>
+                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Burada diğer içerikler -->
+                        </div>
+                    </div>
+                    
+                    <!-- İkinci blok -->
+                    <div class="col-sm-12 col-md-6 col-xl-4">
+                        <div class="h-100 bg-secondary rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Button List</h6>
+                                <a href="">Show All</a>
+                            </div>
+                            <div class="d-flex mb-2">
+                                <input class="form-control bg-dark border-0" type="text" placeholder="Enter Button Value">
+                                <button type="button" class="btn btn-primary m-2"><i class="fa fa-tablet"></i> Add Button</button>
+                            </div>
+                            <div class="d-flex align-items-center border-bottom py-2">
+                                <input class="form-check-input m-0" type="checkbox">
+                                <div class="w-100 ms-3">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <span>Short task goes here...</span>
+                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Burada diğer içerikler -->
+                        </div>
+                    </div>
+                    <button type="button" onclick="saveButtons()" class="btn btn-success m-2"><i class="fa fa-floppy-o"></i>Save All</button>
+
+                </div>
+            </div>
+            <div class="container-fluid pt-4 px-4">
+                <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+                    <div class="col-md-6 text-center">
+                        <div class="button-container" id="buttonContainer">
+                            <label id="button_vnhzm1auw" data-name="TEST" data-contype="switch" class="switch dragme button_vnhzm1auw" data-item="0" draggable="true"><input type="checkbox" id="myCheckbox" name="TEST"><span class="slider round"></span></label>
+                            {% for position in button_positions %}
+                            {% set button_data = {
+                                'auth_key': position[1],
+                                'id': position[2],
+                                'name': position[3],
+                                'type': position[4],
+                                'left': position[5],
+                                'top': position[6],
+                                'class': position[7],
+                                'data_item': position[8]
+                            } %}
+                                    {% if button_data.type == 'switch' %}
+                                    <label id="{{ button_data.id }}" data-contype="switch" data-item=" {{button_data.data_item}} " data-name="{{ button_data.name }}" class="{{ button_data.class }}" style="left: {{ button_data.left }}; top: {{ button_data.top }}" draggable="true">
+                                        <input type="checkbox" id="myCheckbox" name="{{ button_data.name }}">
+                                        <span class="slider round"></span>
+                                    </label>
+                                       
+                                        
+                                    {% endif %}
+                                {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary rounded-top p-4">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 text-center text-sm-start">
+                            &copy; <a href="#">Skylink</a>, Tüm Haklar Sakldıır. 
+                        </div>
+                        <div class="col-12 col-sm-6 text-center text-sm-end">
+                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+    <script>
+        function saveButtons() {
+           var buttons = document.getElementsByClassName('dragme');
+           var buttonPositions = [];
+       
+           for (var i = 0; i < buttons.length; i++) {
+               var button = buttons[i];
+               buttonPositions.push({
+                   auth: "afc342",
+                   id: "afc342",
+                   button_id: button.id,
+                   button_name: button.getAttribute('data-name'),
+       
+                   left: button.style.left,
+                   top: button.style.top,
+                   class: button.className,
+                   'data-item': button.getAttribute('data-item'),
+                   'data-contype': button.getAttribute('data-contype')
+               });
+           }
+       
+           var formData = new FormData();
+           formData.append('button_positions', JSON.stringify(buttonPositions));
+       
+           var xhr = new XMLHttpRequest();
+           xhr.open('POST', '/save_buttons', true);
+       xhr.setRequestHeader('Content-Type', 'application/json'); 
+       xhr.onload = function() {
+           if (xhr.status === 200) {
+               console.log('Button positions saved successfully');
+           } else {
+               console.error('Failed to save button positions');
+           }
+       };
+       xhr.send(JSON.stringify(buttonPositions));
+       }
+       
+       
+       function listenToAllSwitches() {
+           var labels = document.querySelectorAll('label[data-contype="switch"]');
+       
+           labels.forEach(function(label) {
+               var switchInput = label.querySelector('input[type="checkbox"]');
+               
+               if (switchInput) {
+                   switchInput.addEventListener('change', function() {
+                       var isChecked = switchInput.checked;
+                       var buttonName = switchInput.getAttribute('name');
+                       var newStatus = isChecked ? 'ON' : 'OFF';
+       
+                       var formData = new FormData();
+                       formData.append('auth_code', "afc342");
+                       formData.append('device', buttonName);
+                       formData.append('is_checked', newStatus);
+       
+                       var xhr = new XMLHttpRequest();
+                       xhr.open('POST', '/toggle_device', true);
+                       xhr.setRequestHeader('Content-Type', 'application/json');
+                       xhr.onload = function() {
+                           if (xhr.status === 200) {
+                               console.log('Device status toggled successfully');
+                           } else {
+                               console.error('Failed to toggle device status. Status:', xhr.status, 'Response:', xhr.responseText);
+                           }
+                       };
+       
+                       var jsonData = {};
+                       for (var [key, value] of formData.entries()) {
+                           jsonData[key] = value;
+                       }
+       
+                       xhr.send(JSON.stringify(jsonData));
+                   });
+               }
+           });
+       }
+       
+       listenToAllSwitches();
+       
+       function addSwitch() {
+           var buttonName = document.getElementById('buttonName').value; 
+       
+           var authCode = generateAuthCode();
+           var switchId = 'button_' + authCode; 
+       
+           var buttonContainer = document.getElementById('buttonContainer');
+           var switchLabel = document.createElement('label');
+           switchLabel.setAttribute('id', switchId);
+           switchLabel.setAttribute('data-contype', "switch");
+           switchLabel.setAttribute('data-name', buttonName);
+       
+           switchLabel.setAttribute('class', 'switch dragme ' + switchId); 
+           switchLabel.setAttribute('data-item', buttonContainer.children.length); 
+           switchLabel.setAttribute('draggable', true); 
+       
+           var switchInput = document.createElement('input');
+           switchInput.setAttribute('type', 'checkbox');
+           switchInput.setAttribute('id', 'myCheckbox');
+           switchInput.setAttribute('name', buttonName); 
+       
+           var switchSpan = document.createElement('span');
+           switchSpan.setAttribute('class', 'slider round');
+       
+           switchLabel.appendChild(switchInput);
+           switchLabel.appendChild(switchSpan);
+       
+           buttonContainer.appendChild(switchLabel);
+       
+           
+           switchInput.addEventListener('change', function() {
+               var isChecked = switchInput.checked;
+               var buttonName = switchInput.getAttribute('name'); 
+               var newStatus = isChecked ? 'ON' : 'OFF';
+       
+               var formData = new FormData();
+               formData.append('auth_code', "afc342"); 
+               formData.append('device', buttonName); 
+               formData.append('is_checked', newStatus);
+       
+               console.log(isChecked + " N " + buttonName + " Z " + newStatus)
+               var xhr = new XMLHttpRequest();
+               xhr.open('POST', '/toggle_device', true);
+       xhr.setRequestHeader('Content-Type', 'application/json'); 
+       xhr.onload = function() {
+           if (xhr.status === 200) {
+               console.log('Device status toggled successfully');
+           } else {
+               console.error('Failed to toggle device status. Status:', xhr.status, 'Response:', xhr.responseText);
+           }
+       };
+       
+       var jsonData = {};
+       for (var [key, value] of formData.entries()) {
+           jsonData[key] = value;
+       }
+       
+       xhr.send(JSON.stringify(jsonData));
+       
+           });
+           switchLabel.addEventListener('dragstart', function(event) {
+               event.dataTransfer.setData('text/plain', event.target.id);
+               event.dataTransfer.setData('text/prevIndex', event.target.getAttribute('data-item')); // Önceki konumu saklayın
+           });
+       
+           switchLabel.addEventListener('dragstart', drag_start, false);
+           switchLabel.addEventListener('dragover', drag_over, false);
+           switchLabel.addEventListener('drop', drop, false);
+       }
+                  
+       
+       
+       
+               function addButton() {
+                   var buttonName = document.getElementById('buttonName').value;
+                   var buttonContainer = document.getElementById('buttonContainer');
+       
+                   var authCode = generateAuthCode();
+                   var buttonId = 'button_' + authCode;
+       
+                   var button = document.createElement('button');
+                   button.setAttribute('id', buttonId);
+                   switchLabel.setAttribute('contype', "button");
+       
+                   button.setAttribute('class', 'dragme ' + buttonId); 
+                   button.setAttribute('data-item', buttonContainer.children.length); 
+                   button.setAttribute('draggable', true); 
+                   button.innerText = buttonName || 'New Button';
+       
+                   button.addEventListener('dragstart', function(event) {
+                       event.dataTransfer.setData('text/plain', event.target.id);
+                       event.dataTransfer.setData('text/prevIndex', event.target.getAttribute('data-item')); // Önceki konumu saklayın
+                   });
+       
+                   buttonContainer.appendChild(button);
+       
+                   button.addEventListener('dragstart', drag_start, false);
+                   document.body.addEventListener('dragover', drag_over, false);
+                   document.body.addEventListener('drop', drop, false);
+               }
+              
+       
+               function generateAuthCode() {
+                   return Math.random().toString(36).substr(2, 9);
+               }
+       
+               function drag_start(event) {
+                   var style = window.getComputedStyle(event.target, null);
+                   event.dataTransfer.setData("text/plain", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + ',' + event.target.getAttribute('data-item'));
+               }
+       
+               function drag_over(event) {
+                   event.preventDefault();
+                   return false;
+               }
+         
+       
+               function drop(event) {
+           var offset = event.dataTransfer.getData("text/plain").split(',');
+           var dm = document.getElementsByClassName('dragme');
+           var draggedItemIndex = parseInt(offset[2]);
+           
+           if (dm.length > draggedItemIndex && draggedItemIndex >= 0) {
+               dm[draggedItemIndex].style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
+               dm[draggedItemIndex].style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+           } else {
+               console.error('Hedef öğe bulunamadı veya geçersiz.');
+           }
+           event.preventDefault();
+           return false;
+       }
+       
+       
+               var dm = document.getElementsByClassName('dragme');
+               for (var i = 0; i < dm.length; i++) {
+                   dm[i].addEventListener('dragstart', drag_start, false);
+                   document.body.addEventListener('dragover', drag_over, false);
+                   document.body.addEventListener('drop', drop, false);
+               }
+       
+           </script>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/chart/chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+
+</html>
