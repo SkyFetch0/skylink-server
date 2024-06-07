@@ -1,10 +1,11 @@
-function saveButtons(userKey,contKey) {
+function saveButtons(userKey,contKey,userid) {
     var buttons = document.getElementsByClassName('dragme');
     var buttonPositions = [];
 
     for (var i = 0; i < buttons.length; i++) {
         var button = buttons[i];
         buttonPositions.push({
+            id: userid,
             auth: userKey,
             container: contKey,
             user_id: cZ3pi4AzfC,
@@ -67,7 +68,92 @@ function loadButtons() {
     }
 }
 
+function listenToAllButtons() {
+    var buttons = document.querySelectorAll('button[data-contype="button"]');
 
+    buttons.forEach(function(button) {
+        button.addEventListener('click', () => {
+            var buttonName = button.getAttribute('data-name');
+            var buttonStatus = button.getAttribute('data-status');
+            var formData = new FormData();
+            formData.append('auth_code', kfZpM9C3);
+            formData.append('container_key', kfZpM9C4);
+            formData.append('device', buttonName);
+            formData.append('type', "button");
+
+            if (buttonStatus === "OFF") {
+                formData.append('action', 'ON');
+                button.setAttribute('data-status', "ON");
+                button.innerText = "On";
+                button.classList.remove("toggleButtonoff");
+            } else {
+                formData.append('action', 'OFF');
+                button.setAttribute('data-status', "OFF");
+                button.innerText = "Off";
+                button.classList.add("toggleButtonoff");
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/toggle_device', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Button clicked successfully');
+                } else {
+                    console.error('Failed to handle button click. Status:', xhr.status, 'Response:', xhr.responseText);
+                }
+            };
+
+            var jsonData = {};
+            for (var [key, value] of formData.entries()) {
+                jsonData[key] = value;
+            }
+
+            xhr.send(JSON.stringify(jsonData));
+        });
+    });
+}
+listenToAllButtons()
+function listenToAllMessages() {
+    var messages = document.querySelectorAll('div[data-contype="message"]');
+
+    messages.forEach(function(message) {
+        var input = message.querySelector('input[type="text"]');
+        
+        if (input) {
+            input.addEventListener('input', function() {
+                var buttonName = message.getAttribute('data-name');
+                var inputValue = input.value;
+                console.log(inputValue);
+                var formData = new FormData();
+                formData.append('auth_code', kfZpM9C3);
+                formData.append('container_key', kfZpM9C4);
+                formData.append('device', buttonName);
+                formData.append('type', "message");
+                formData.append('action', inputValue);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/toggle_device', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('Message sent successfully');
+                    } else {
+                        console.error('Failed to send message. Status:', xhr.status, 'Response:', xhr.responseText);
+                    }
+                };
+
+                var jsonData = {};
+                for (var [key, value] of formData.entries()) {
+                    jsonData[key] = value;
+                }
+
+                xhr.send(JSON.stringify(jsonData));
+            });
+        }
+    });
+}
+listenToAllMessages()
 function listenToAllSwitches() {
     var labels = document.querySelectorAll('label[data-contype="switch"]');
 
@@ -81,9 +167,12 @@ function listenToAllSwitches() {
                 var newStatus = isChecked ? 'ON' : 'OFF';
 
                 var formData = new FormData();
-                formData.append('auth_code', "afc342");
+                formData.append('auth_code', kfZpM9C3);
+                formData.append('container_key', kfZpM9C4);
+                formData.append('type', "switch");
+
                 formData.append('device', buttonName);
-                formData.append('is_checked', newStatus);
+                formData.append('action', newStatus);
 
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/toggle_device', true);
@@ -144,7 +233,9 @@ function addSwitch(buttonName) {
         var newStatus = isChecked ? 'ON' : 'OFF';
 
         var formData = new FormData();
-        formData.append('auth_code', "afc342"); 
+        formData.append('auth_code', kfZpM9C3); 
+        formData.append('container_key', kfZpM9C4); 
+
         formData.append('device', buttonName); 
         formData.append('type', "switch"); 
 
@@ -220,7 +311,9 @@ function addMessageInput(buttonName) {
         var inputValue = input.value;
         var formData = new FormData();
 
-        formData.append('auth_code', "afc342"); 
+        formData.append('auth_code', kfZpM9C3); 
+        formData.append('container_key', kfZpM9C4); 
+
         formData.append('device', buttonName); 
         formData.append('type', "message"); 
         formData.append('action', inputValue); 
@@ -274,7 +367,9 @@ function addButton(buttonName) {
         var buttonName = newButton.getAttribute('data-name');
         var buttonStatus = newButton.getAttribute('data-status');
         var formData = new FormData();
-        formData.append('auth_code', "afc342"); 
+        formData.append('auth_code', kfZpM9C3);
+        formData.append('container_key', kfZpM9C4);
+
         formData.append('device', buttonName); 
         formData.append('type', "button"); 
         
