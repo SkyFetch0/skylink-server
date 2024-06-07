@@ -4,7 +4,7 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Register / SkyLink</title>
+        <title>Skylink Register</title>
         <!-- plugins:css -->
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendors/mdi/css/materialdesignicons.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendors/css/vendor.bundle.base.css') }}">
@@ -16,7 +16,7 @@
         <!-- Layout styles -->
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
         <!-- End layout styles -->
-        <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/favicon.png') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.png') }}">
     </head>
     
   <body>
@@ -40,23 +40,12 @@
                     <label>Password</label>
                     <input type="password" name="password" class="form-control p_input">
                   </div>
-                  <div class="form-group d-flex align-items-center justify-content-between">
-                    <div class="form-check">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input"> Remember me </label>
-                    </div>
-                    <a href="#" class="forgot-pass">Forgot password</a>
-                  </div>
+             
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary btn-block enter-btn">Login</button>
                   </div>
-                  <div class="d-flex">
-                    <button class="btn btn-facebook col mr-2">
-                      <i class="mdi mdi-facebook"></i> Facebook </button>
-                    <button class="btn btn-google col">
-                      <i class="mdi mdi-google-plus"></i> Google plus </button>
-                  </div>
-                  <p class="sign-up text-center">Already have an Account?<a href="#"> Sign Up</a></p>
+               
+                  <p class="sign-up text-center">Already have an Account?<a href="/login"> Sign Up</a></p>
                   <p class="terms">By creating an account you are accepting our<a href="#"> Terms & Conditions</a></p>
                 </form>
               </div>

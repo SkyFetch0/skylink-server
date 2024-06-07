@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Skylink Panel</title>
+    <title>Syklink Containers</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendors/css/vendor.bundle.base.css') }}">
@@ -150,8 +150,8 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo" href="/panel"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" /></a>
-          <a class="sidebar-brand brand-logo-mini" href="/panel"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo" href="index.html"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -334,8 +334,6 @@
                       <p class="text-muted ellipsis mb-0"> Update dashboard </p>
                     </div>
                   </a>
-                  
-
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
@@ -450,7 +448,7 @@
                       </div>
                       <div class="row">
                         <div class="col-12">
-                            {% for position in container %}
+                            {% for position in container_data %}
                             {% set cdata = {
                                 'uid': position[1],
                                 'key': position[2],
@@ -485,6 +483,7 @@
                                     <h6  class="preview-subject"> Open </h6>
                                 </a>
                                   </div>
+                             
                               </div>
                             </div>
                             {% endfor %}
