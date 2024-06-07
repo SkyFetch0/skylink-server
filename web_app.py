@@ -23,30 +23,14 @@ def generate_text():
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
+
     return conn
 
 def init_db():
     with app.app_context():
         db = get_db()
         cursor = db.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS users_data (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                auth_key TEXT,
-                D0 TEXT,
-                D1 TEXT,
-                D2 TEXT,
-                D3 TEXT,
-                D4 TEXT,
-                D5 TEXT,
-                D6 TEXT,
-                D7 TEXT,
-                D8 TEXT
-            )
-        ''')
-        db.commit()
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_auth_key ON users_data (auth_key)')
-        db.commit()
+
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS button_positions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,6 +48,7 @@ def init_db():
             )
         ''')
         db.commit()
+
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,6 +60,7 @@ def init_db():
             )
         ''')
         db.commit()
+
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS container (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,9 +68,35 @@ def init_db():
                 container_key TEXT,
                 container_name TEXT,
                 auth_key TEXT,
-                container_type TEXT
+                container_type TEXT,       
+                D0 TEXT,
+                D1 TEXT,
+                D2 TEXT,
+                D3 TEXT,
+                D4 TEXT,
+                D5 TEXT,
+                D6 TEXT,
+                D7 TEXT,
+                D8 TEXT,
+                D9 TEXT,
+                I0 TEXT,
+                I1 TEXT,
+                I2 TEXT,
+                I3 TEXT,
+                I4 TEXT,
+                I5 TEXT,
+                I6 TEXT,
+                I7 TEXT,
+                I8 TEXT,
+                I9 TEXT
             )
         ''')
+        db.commit()
+
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_auth_key ON container (auth_key)')
+        db.commit()
+
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_container_key ON container (container_key)')
         db.commit()
 
 @app.route('/')
@@ -93,28 +105,76 @@ def index():
 
 
 # Register System
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+
+        if not username or not email or not password:
+            flash('Lütfen tüm alanları doldurun.', 'error')
+            return redirect(url_for('register'))
+
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("SELECT * FROM users WHERE user_name = ? OR user_mail = ?", (username, email))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            flash('Bu kullanıcı adı veya e-posta zaten kullanılıyor.', 'error')
+            return redirect(url_for('register'))
         
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         user_key = hashlib.md5(email.encode()).hexdigest()
         
-        db = get_db()
-        cursor = db.cursor()
-        
-        cursor.execute("INSERT INTO users (user_name, user_pass, user_mail, user_type, user_key) VALUES ( ?, ?, ?, ?, ?)", (username, hashed_password, email, 'user', user_key))
-        db.commit()
-        cursor.execute("INSERT INTO users_data (auth_key) VALUES ( ?)", (user_key,))
+        cursor.execute("INSERT INTO users (user_name, user_pass, user_mail, user_type, user_key) VALUES (?, ?, ?, ?, ?)", (username, hashed_password, email, 'user', user_key))
         db.commit()
         db.close()
         
         flash('Kayıt başarılı! Giriş yapabilirsiniz.', 'success')
         return redirect(url_for('login'))
+    
     return render_template('register.html')
+
+# Login System
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        if not email or not password:
+            flash('Lütfen e-posta ve şifrenizi girin.', 'error')
+            return redirect(url_for('login'))
+        
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        
+        db = get_db()
+        cursor = db.cursor()
+        
+        cursor.execute("SELECT * FROM users WHERE user_mail = ? AND user_pass = ?", (email, hashed_password))
+        user = cursor.fetchone()
+        db.close()
+        
+        if user:
+            session.clear()  # Oturum sabitlemeyi önlemek için mevcut oturumu temizleyin
+            session['user_id'] = user[0]
+            session['user_name'] = user[1]
+            session['user_type'] = user[4]
+            session['auth_key'] = user[5]
+            flash('Giriş başarılı!', 'success')
+            print("Giriş Başarılı")
+            return redirect(url_for('panel'))
+        else:
+            flash('Geçersiz e-posta veya şifre.', 'danger')
+            print("Geçersiz Oturum")
+            return redirect(url_for('login'))
+    
+    print("NO POST")
+    return render_template('login.html')
 
 
 @app.route('/panel')
@@ -148,38 +208,6 @@ def panel():
         flash('Lütfen giriş yapınız.', 'danger')
         return redirect(url_for('index'))
 
-# Login System
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        
-        db = get_db()
-        cursor = db.cursor()
-        
-        cursor.execute("SELECT * FROM users WHERE user_mail = ? AND user_pass = ?", (email, hashed_password))
-        user = cursor.fetchone()
-        db.close()
-        
-        if user:
-            session['user_id'] = user[0]
-            session['user_name'] = user[1]
-            session['user_type'] = user[4]
-
-            session['auth_key'] = user[5]
-            flash('Giriş başarılı!', 'success')
-            print("Giriş Başarılı")
-            return redirect(url_for('panel'))
-        else:
-            flash('Geçersiz e-posta veya şifre.', 'danger')
-            print("Geçersiz Oturum")
-            return redirect(url_for('login'))
-    print("NO POST")
-
-    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -286,6 +314,35 @@ def create_container():
     else:
         return "Error: Missing or empty field(s)", 400
 
+@app.route('/container', methods=['GET'])
+def containers():
+    if 'auth_key' in session:
+        auth_key = session['auth_key']
+        user_id = session['user_id']
+        
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE user_key = ?", (auth_key,))
+        user_data = cursor.fetchone()
+
+        if user_data:
+            cursor.execute("SELECT * FROM container WHERE auth_key = ? AND user_id = ?", (auth_key, user_id))
+            container_data = cursor.fetchall()
+            db.close()
+            if containers:
+                print(container_data)
+                return render_template('containers.html', container_data=container_data)
+            else:
+                flash('No containers found for this user.', 'warning')
+                return redirect(url_for('panel'))
+        else:
+            flash('Invalid user authentication.', 'danger')
+            return redirect(url_for('login'))
+    else:
+        flash('You need to be logged in to view this page.', 'danger')
+        return redirect(url_for('login'))
+
+
 
 @app.route('/container/<container_key>', methods=['GET'])
 def container(container_key):
@@ -329,16 +386,16 @@ def container(container_key):
 @app.route('/toggle_device', methods=['POST'])
 def toggle_device():
     data = request.json
+    print(data)
     auth_code = data['auth_code']
     device = data['device']
     type = data['type']
-
+    container_key = data['container_key']
     action = data['action']
     
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT {} FROM users_data WHERE auth_key = ?".format(device), (auth_code,))
-    current_status = cursor.fetchone()[0]
+    cursor.execute("SELECT {} FROM container WHERE auth_key = ? AND container_key = ?".format(device), (auth_code,container_key))
     if type == "message":
         new_status = action
     else:
@@ -346,7 +403,7 @@ def toggle_device():
 
    
 
-    cursor.execute(f"UPDATE users_data SET {device} = ? WHERE auth_key = ?", (new_status, auth_code))
+    cursor.execute(f"UPDATE container SET {device} = ? WHERE auth_key = ? AND container_key = ?", (new_status, auth_code,container_key))
     db.commit()
 
     return 'OK', 200
